@@ -1,10 +1,10 @@
 import Page from '@/components/page'
 import Section from '@/components/section'
 
-const Recipes = () => (
+const Settings = () => (
 	<Page>
 		<Section>
-			<h2 className='text-xl font-semibold'>Ingredients</h2>
+			<h2 className='text-xl font-semibold'>Settings</h2>
 
 			<div className='mt-2'>
 				<p className='text-zinc-600 dark:text-zinc-400'>
@@ -36,4 +36,4 @@ const Recipes = () => (
 	</Page>
 )
 
-export default Recipes
+export default Settings

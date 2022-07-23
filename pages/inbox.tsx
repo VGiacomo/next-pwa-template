@@ -1,10 +1,10 @@
 import Page from '@/components/page'
 import Section from '@/components/section'
 
-const Story = () => (
+const Inbox = () => (
 	<Page>
 		<Section>
-			<h2 className='text-xl font-semibold'>Story</h2>
+			<h2 className='text-xl font-semibold'>Inbox</h2>
 
 			<div className='mt-2'>
 				<p className='text-zinc-600 dark:text-zinc-400'>
@@ -26,4 +26,4 @@ const Story = () => (
 	</Page>
 )
 
-export default Story
+export default Inbox
