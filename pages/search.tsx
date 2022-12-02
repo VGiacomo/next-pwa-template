@@ -1,11 +1,12 @@
 import Page from '@/components/page'
+import SearchInput from '@/components/searchInput'
 import Section from '@/components/section'
 
 const Search = () => (
 	<Page>
 		<Section>
 			<h2 className='text-xl font-semibold'>Search</h2>
-
+<SearchInput></SearchInput>
 			<div className='mt-2'>
 				<p className='text-zinc-600 dark:text-zinc-400'>
 					Like any good recipe, we appreciate community offerings to cultivate a

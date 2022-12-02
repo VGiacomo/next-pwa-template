@@ -1,10 +1,12 @@
 import Page from '@/components/page'
 import Section from '@/components/section'
+import Gmail from './gmail'
 
 const Inbox = () => (
 	<Page>
 		<Section>
-			<h2 className='text-xl font-semibold'>Inbox</h2>
+			<Gmail></Gmail>
+			{/* <h2 className='text-xl font-semibold'>Inbox</h2>
 
 			<div className='mt-2'>
 				<p className='text-zinc-600 dark:text-zinc-400'>
@@ -21,7 +23,7 @@ const Inbox = () => (
 					</a>
 					, a two sentence story
 				</p>
-			</div>
+			</div> */}
 		</Section>
 	</Page>
 )

@@ -12,7 +12,7 @@ const Meta = () => (
 		/>
 		<meta name='apple-mobile-web-app-title' content='News Barn' />
 		<meta name='application-name' content='News Barn' />
-		<meta name='description' content='Bring your own ingredients' />
+		<meta name='description' content='Up to date, effortless' />
 		<meta
 			name='theme-color'
 			content='#f4f4f5'

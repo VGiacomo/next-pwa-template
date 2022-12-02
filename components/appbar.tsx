@@ -54,6 +54,18 @@ const Appbar = () => {
 								></div>
 							</Link>
 						</div>
+						<div>
+							<Link href='/discover'>
+								<div
+									title='Discover'
+									className={`h-10 w-10 rounded-full bg-zinc-200 bg-cover bg-center shadow-inner dark:bg-zinc-800 ${
+										router.pathname === '/account'
+											? 'hover:border-blue-900 hover:border-solid '
+											: 'hover:border-black-900 hover:border-solid '
+									}`}
+								></div>
+							</Link>
+						</div>
 					</nav>
 				</div>
 			</header>
