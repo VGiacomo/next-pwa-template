@@ -5,6 +5,7 @@ const links = [
 	{ label: 'Search', href: '/search' },
 	{ label: 'Inbox', href: '/inbox' },
 	{ label: 'Settings', href: '/settings' },
+	{ label: 'Login', href: '/login' },
 ]
 
 const Appbar = () => {

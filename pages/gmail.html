@@ -1,161 +1,116 @@
-
-            <!--
-Copyright 2018 Google LLC
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-    https://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
-<!-- [START gmail_quickstart] -->
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <title>Gmail API Quickstart</title>
-    <meta charset="utf-8" />
+    <title>Gmail API demo</title>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <style>
+      .hidden{ display: none; }
+    </style>
   </head>
   <body>
-    <p>Gmail API Quickstart</p>
+    <div class="container">
+      <h1>Gmail API demo</h1>
 
-    <!--Add buttons to initiate auth sequence and sign out-->
-    <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
-    <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
+      <button id="authorize-button" class="btn btn-primary hidden">Authorize</button>
 
-    <pre id="content" style="white-space: pre-wrap;"></pre>
+      <table class="table table-striped table-inbox hidden">
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>Subject</th>
+            <th>Date/Time</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
     <script type="text/javascript">
-      /* exported gapiLoaded */
-      /* exported gisLoaded */
-      /* exported handleAuthClick */
-      /* exported handleSignoutClick */
-
       // TODO(developer): Set to client ID and API key from the Developer Console
-      const CLIENT_ID = '137757519679-6u6dtvu20at7tciiltpcf6berkopgun0.apps.googleusercontent.com';
+      const CLIENT_ID = '137757519679-3n386v4albrndccngj11oufpvfudodij.apps.googleusercontent.com';
       const API_KEY = 'AIzaSyA_NKFXH7aLknWJWuiB3zrXuM79WrkztKM';
+      var scopes = 'https://www.googleapis.com/auth/gmail.readonly';
 
-      // Discovery doc URL for APIs used by the quickstart
-      const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest';
+      function handleClientLoad() {
+  gapi.client.setApiKey(apiKey);
+  window.setTimeout(checkAuth, 1);
+}
 
-      // Authorization scopes required by the API; multiple scopes can be
-      // included, separated by spaces.
-      const SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
+function checkAuth() {
+  gapi.auth.authorize({
+    client_id: clientId,
+    scope: scopes,
+    immediate: true
+  }, handleAuthResult);
+}
 
-      let tokenClient;
-      let gapiInited = false;
-      let gisInited = false;
+function handleAuthClick() {
+  gapi.auth.authorize({
+    client_id: clientId,
+    scope: scopes,
+    immediate: false
+  }, handleAuthResult);
+  return false;
+}
 
-      document.getElementById('authorize_button').style.visibility = 'hidden';
-      document.getElementById('signout_button').style.visibility = 'hidden';
+function handleAuthResult(authResult) {
+  if(authResult && !authResult.error) {
+    loadGmailApi();
+    $('#authorize-button').remove();
+    $('.table-inbox').removeClass("hidden");
+  } else {
+    $('#authorize-button').removeClass("hidden");
+    $('#authorize-button').on('click', function(){
+      handleAuthClick();
+    });
+  }
+}
 
-      /**
-       * Callback after api.js is loaded.
-       */
-      function gapiLoaded() {
-        gapi.load('client', initializeGapiClient);
-      }
+function displayInbox() {
+  var request = gapi.client.gmail.users.messages.list({
+    'userId': 'me',
+    'labelIds': 'INBOX',
+    'maxResults': 10
+  });
 
-      /**
-       * Callback after the API client is loaded. Loads the
-       * discovery doc to initialize the API.
-       */
-      async function initializeGapiClient() {
-        await gapi.client.init({
-          apiKey: API_KEY,
-          discoveryDocs: [DISCOVERY_DOC],
-        });
-        gapiInited = true;
-        maybeEnableButtons();
-      }
+  request.execute(function(response) {
+    $.each(response.messages, function() {
+      var messageRequest = gapi.client.gmail.users.messages.get({
+        'userId': 'me',
+        'id': this.id
+      });
 
-      /**
-       * Callback after Google Identity Services are loaded.
-       */
-      function gisLoaded() {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: CLIENT_ID,
-          scope: SCOPES,
-          callback: '', // defined later
-        });
-        gisInited = true;
-        maybeEnableButtons();
-      }
+      messageRequest.execute(appendMessageRow);
+    });
+  });
+}
 
-      /**
-       * Enables user interaction after all libraries are loaded.
-       */
-      function maybeEnableButtons() {
-        if (gapiInited && gisInited) {
-          document.getElementById('authorize_button').style.visibility = 'visible';
-        }
-      }
+function loadGmailApi() {
+  gapi.client.load('gmail', 'v1', displayInbox);
+}
 
-      /**
-       *  Sign in the user upon button click.
-       */
-      function handleAuthClick() {
-        tokenClient.callback = async (resp) => {
-          if (resp.error !== undefined) {
-            throw (resp);
-          }
-          document.getElementById('signout_button').style.visibility = 'visible';
-          document.getElementById('authorize_button').innerText = 'Refresh';
-          await listLabels();
-        };
-
-        if (gapi.client.getToken() === null) {
-          // Prompt the user to select a Google Account and ask for consent to share their data
-          // when establishing a new session.
-          tokenClient.requestAccessToken({prompt: 'consent'});
-        } else {
-          // Skip display of account chooser and consent dialog for an existing session.
-          tokenClient.requestAccessToken({prompt: ''});
-        }
-      }
-
-      /**
-       *  Sign out the user upon button click.
-       */
-      function handleSignoutClick() {
-        const token = gapi.client.getToken();
-        if (token !== null) {
-          google.accounts.oauth2.revoke(token.access_token);
-          gapi.client.setToken('');
-          document.getElementById('content').innerText = '';
-          document.getElementById('authorize_button').innerText = 'Authorize';
-          document.getElementById('signout_button').style.visibility = 'hidden';
-        }
-      }
-
-      /**
-       * Print all Labels in the authorized user's inbox. If no labels
-       * are found an appropriate message is printed.
-       */
-      async function listLabels() {
-        let response;
-        try {
-          response = await gapi.client.gmail.users.labels.list({
-            'userId': 'me',
-          });
-        } catch (err) {
-          document.getElementById('content').innerText = err.message;
-          return;
-        }
-        const labels = response.result.labels;
-        if (!labels || labels.length == 0) {
-          document.getElementById('content').innerText = 'No labels found.';
-          return;
-        }
-        // Flatten to string to display
-        const output = labels.reduce(
-            (str, label) => `${str}${label.name}\n`,
-            'Labels:\n');
-        document.getElementById('content').innerText = output;
-      }
+function appendMessageRow(message) {
+  $('.table-inbox tbody').append(
+    '<tr>\
+      <td>'+getHeader(message.payload.headers, 'From')+'</td>\
+      <td>'+getHeader(message.payload.headers, 'Subject')+'</td>\
+      <td>'+getHeader(message.payload.headers, 'Date')+'</td>\
+    </tr>'
+  );
+}
     </script>
+
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+  </body>
+</html>
+
+
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
     <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
   </body>

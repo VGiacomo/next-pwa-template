@@ -3,78 +3,44 @@ import Section from '@/components/section'
 import { Button } from '@mui/material'
 import { useEffect } from 'react'
 
-// const Inbox = () => (
-// 	<Page>
-// 		<Section>
-//       {useEffect(() => {
-//         const gapiLoaded =() =>{
-
-//         }
-//         gapiLoaded();
-//         gisLoaded();
-
-//       }, [])}
-
-//       </Section>
-//       <Section>
-// 			<Button id='authorize_button'></Button>
-// 			<Button id='signout_button'></Button>
-// 		</Section>
-// 	</Page>
-// )
-
 export default function Gmail() {
-	useEffect(() => {
-		const p = oauthSignIn()
-    console.log({p});
-    
+	
+	// This is a simple Node.js mail server that receives email coming from a Gmail inbox.
 
-		// const emails = getEmails()
-		// console.log({ emails })
-	}, )
+const nodemailer = require('nodemailer'); // Import the nodemailer module
 
-	/*
-	 * Create form to request access token from Google's OAuth 2.0 server.
-	 */
-	function oauthSignIn() {
-		// Google's OAuth 2.0 endpoint for requesting an access token
-		var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth'
+// Create a transport object for sending email
+const transport = nodemailer.createTransport({
+  host: 'smtp.gmail.com', // Gmail SMTP server
+  port: 465, // Gmail SMTP port
+  secure: true, // use SSL
+  auth: {
+    user: '<your-gmail-username>@gmail.com', // Your Gmail username
+    pass: '<your-gmail-password>' // Your Gmail password
+  }
+});
 
-		// Create <form> element to submit parameters to OAuth 2.0 endpoint.
-		var form = document.createElement('form')
-		form.setAttribute('method', 'GET') // Send as a GET request.
-		form.setAttribute('action', oauth2Endpoint)
+// Create a server that listens for incoming email
+const server = nodemailer.createServer({
+  debug: true // Enable debug logging
+});
 
-		// Parameters to pass to OAuth 2.0 endpoint.
-		var params: any = {
-			client_id:
-				'137757519679-6u6dtvu20at7tciiltpcf6berkopgun0.apps.googleusercontent.com',
-			redirect_uri: 'http://localhost:3000',
-			response_type: 'token',
-			scope: 'https://www.googleapis.com/auth/gmail.readonly',
-			include_granted_scopes: 'true',
-			state: 'pass-through value',
-		}
+// Start the server
+server.listen(2525, 'localhost', function() {
+  console.log('Mail server listening on localhost:2525');
+});
 
-		// Add form parameters as hidden input values.
-		for (var p in params) {
-			var input = document.createElement('input')
-			input.setAttribute('type', 'hidden')
-			input.setAttribute('name', p)
-			input.setAttribute('value', params[p])
-			form.appendChild(input)
-		}
-
-		// Add form to page and submit it to open the OAuth 2.0 endpoint.
-		document.body.appendChild(form)
-		form.submit()
-    return params;
-	}
+// Handle incoming email
+server.on('message', function(msg) {
+  console.log('New email received:');
+  console.log(msg); // Log the received email to the console
+});
 
 	return (
 		<Page>
 			<Section>
-				{/* <div dangerouslySetInnerHTML={{ __html: myHTML }} /> */}
+				{/* {render()} */}
+				{/* <iframe src={htmlFile}></iframe>{' '} */}
 			</Section>
 		</Page>
 	)

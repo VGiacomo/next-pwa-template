@@ -2,8 +2,10 @@ import type { AppProps } from 'next/app'
 import { ThemeProvider } from 'next-themes'
 import Meta from '@/components/meta'
 import '@/styles/globals.css'
+import { SessionProvider } from 'next-auth/react'
 
-const App = ({ Component, pageProps }: AppProps) => {
+//@ts-ignore
+const App = ({ Component, pageProps, session }: AppProps) => {
 	return (
 		<ThemeProvider
 			attribute='class'
@@ -11,7 +13,9 @@ const App = ({ Component, pageProps }: AppProps) => {
 			disableTransitionOnChange
 		>
 			<Meta />
-			<Component {...pageProps} />
+			<SessionProvider session={session}>
+				<Component {...pageProps} />
+			</SessionProvider>
 		</ThemeProvider>
 	)
 }
