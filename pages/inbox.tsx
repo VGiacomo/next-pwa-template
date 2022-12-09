@@ -1,31 +1,36 @@
-import Page from '@/components/page'
-import Section from '@/components/section'
-import Gmail from './gmail'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
-const Inbox = () => (
-	<Page>
-		<Section>
-			<Gmail></Gmail>
-			{/* <h2 className='text-xl font-semibold'>Inbox</h2>
+function Home() {
+	const [emails, setEmails] = useState([])
 
-			<div className='mt-2'>
-				<p className='text-zinc-600 dark:text-zinc-400'>
-					&quot;I confess that when this all started, you were like a picture
-					out of focus to me. And it took time for my eyes to adjust to you, to
-					make sense of you, to really recognize you.&quot;
-				</p>
+	// Get the access token from the global variable or the session cookie.
+	const accessToken = global.accessToken
+	// or
+	// const accessToken = req.cookies.accessToken
 
-				<br />
+	useEffect(() => {
+		console.log({ accessToken })
 
-				<p className='text-sm text-zinc-600 dark:text-zinc-400'>
-					<a href='https://twosentencestories.com/vision' className='underline'>
-						Vision
-					</a>
-					, a two sentence story
-				</p>
-			</div> */}
-		</Section>
-	</Page>
-)
+		axios
+			.get('/api/emails'
+			// , {
+			// 	headers: {
+			// 		Authorization: `Bearer ${accessToken}`,
+			// 	},
+			// }
+			)
+			.then((response: any) => setEmails(response.data))
+			.catch((error: any) => console.error(error))
+	}, [])
 
-export default Inbox
+	return (
+		<ul>
+			{emails.map((email) => (
+				<li key={email}>{email}</li>
+			))}
+		</ul>
+	)
+}
+
+export default Home
