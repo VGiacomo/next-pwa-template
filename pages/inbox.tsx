@@ -1,40 +1,38 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { Message, HomeProps } from './types'
+import { authorize, listMessages } from '../services/gmailService'
 
-function Home() {
-	const [emails, setEmails] = useState([])
+export async function getServerSideProps() {
+	let messages: Message[] = []
+	try {
+		const authRes = await authorize()
+		messages = await listMessages(authRes)
+	} catch (error) {
+		console.log(error)
+	}
 
-	// Get the access token from the global variable or the session cookie.
-	// const accessToken = global.accessToken
-	// or
-	// const accessToken = req.cookies.accessToken
+	// Pass data to the page via props
+	return {
+		props: {
+			emails: messages,
+		},
+	}
+}
 
-	useEffect(() => {
-		// console.log({ accessToken })
-
-		axios
-			.get(
-				'/api/emails'
-				// , {
-				// 	headers: {
-				// 		Authorization: `Bearer ${accessToken}`,
-				// 	},
-				// }
-			)
-			.then((response: any) => setEmails(response.data))
-			.catch((error: any) => console.error(error))
-	}, [])
+function Inbox({ emails }: HomeProps) {
+	console.log(emails)
 
 	return (
 		<div>
 			List of emails :
 			<ul>
 				{emails.map((email) => (
-					<li key={email}>{email}</li>
+					<li key={email.id}>{email.snippet}</li>
 				))}
 			</ul>
 		</div>
 	)
 }
 
-export default Home
+export default Inbox
