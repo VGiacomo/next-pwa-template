@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Message, HomeProps } from './types'
 import { authorize, listMessages } from '../services/gmailService'
 import { Buffer } from 'buffer'
+import Page from '@/components/page'
+import Section from '@/components/section'
 
 export async function getServerSideProps() {
 	let messages: Message[] = []
@@ -34,35 +36,46 @@ function Inbox({ emails }: HomeProps) {
 	})
 	console.log(emails)
 
+	function onClickedTitle(emailId: string, emailContent: string) {
+		emailDataToShow.id !== emailId
+			? setEmailDataToShow({
+					id: emailId,
+					content: emailContent,
+			  })
+			: setEmailDataToShow({ id: '', content: '' })
+	}
+
 	return (
-		<div>
-			List of emails :
-			<ul>
-				{emails.map((email) => (
-					<li key={email.id}>
-						<div
-							onClick={() =>
-								setEmailDataToShow({
-									id: email.id,
-									content: base64DecodeUnicode(
-										email.payload.parts[1].body.data
-									),
-								})
-							}
-						>
-							{email.snippet}
-						</div>
-						{emailDataToShow?.id === email.id && (
-							<div
-								dangerouslySetInnerHTML={{ __html: emailDataToShow.content }}
-							></div>
-						)}
-					</li>
-				))}
-			</ul>
-			{
-				// display the content of each email as html content
-				/* <ul>
+		<Page>
+			<Section>
+				<div>
+					List of emails :
+					<ul>
+						{emails.map((email) => (
+							<li key={email.id}>
+								<div
+									onClick={() =>
+										onClickedTitle(
+											email.id,
+											base64DecodeUnicode(email.payload.parts[1].body.data)
+										)
+									}
+								>
+									{email.snippet}
+								</div>
+								{emailDataToShow?.id === email.id && (
+									<div
+										dangerouslySetInnerHTML={{
+											__html: emailDataToShow.content,
+										}}
+									></div>
+								)}
+							</li>
+						))}
+					</ul>
+					{
+						// display the content of each email as html content
+						/* <ul>
 				{emails.map((email) => (
 					<li key={email.id} style={{backgroundColor: 'white', width: 'auto'}}>
 						<div dangerouslySetInnerHTML={{ __html: base64DecodeUnicode(email.payload.parts[1].body.data) }}></div>
@@ -74,8 +87,10 @@ function Inbox({ emails }: HomeProps) {
 					</li>
 				))}
 			</ul> */
-			}
-		</div>
+					}
+				</div>
+			</Section>
+		</Page>
 	)
 }
 
