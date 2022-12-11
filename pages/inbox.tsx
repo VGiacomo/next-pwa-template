@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import { Message, HomeProps } from './types'
 import { authorize, listMessages } from '../services/gmailService'
-import { atob, Buffer } from 'buffer'
+import { Buffer } from 'buffer'
 
 export async function getServerSideProps() {
 	let messages: Message[] = []
@@ -24,23 +23,46 @@ export async function getServerSideProps() {
 function base64DecodeUnicode(str: any) {
 	// Convert Base64 encoded bytes to percent-encoding, and then get the original string.
 	// Decode the base64-encoded string
-  const decodedString = Buffer.from(str, 'base64').toString('utf8');
+	const decodedString = Buffer.from(str, 'base64').toString('utf8')
 	return decodedString
 }
 
 function Inbox({ emails }: HomeProps) {
+	const [emailDataToShow, setEmailDataToShow] = useState({
+		id: '',
+		content: '',
+	})
 	console.log(emails)
-	let decodedString: string = ''
 
 	return (
 		<div>
 			List of emails :
-			{/* <ul>
-				{emails.map((email) => (
-					<li key={email.id}>{email.snippet}</li>
-				))}
-			</ul> */}
 			<ul>
+				{emails.map((email) => (
+					<li key={email.id}>
+						<div
+							onClick={() =>
+								setEmailDataToShow({
+									id: email.id,
+									content: base64DecodeUnicode(
+										email.payload.parts[1].body.data
+									),
+								})
+							}
+						>
+							{email.snippet}
+						</div>
+						{emailDataToShow?.id === email.id && (
+							<div
+								dangerouslySetInnerHTML={{ __html: emailDataToShow.content }}
+							></div>
+						)}
+					</li>
+				))}
+			</ul>
+			{
+				// display the content of each email as html content
+				/* <ul>
 				{emails.map((email) => (
 					<li key={email.id} style={{backgroundColor: 'white', width: 'auto'}}>
 						<div dangerouslySetInnerHTML={{ __html: base64DecodeUnicode(email.payload.parts[1].body.data) }}></div>
@@ -51,7 +73,8 @@ function Inbox({ emails }: HomeProps) {
 						{' '}
 					</li>
 				))}
-			</ul>
+			</ul> */
+			}
 		</div>
 	)
 }
