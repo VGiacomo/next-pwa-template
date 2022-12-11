@@ -4,6 +4,7 @@ import { authorize, listMessages } from '../services/gmailService'
 import { Buffer } from 'buffer'
 import Page from '@/components/page'
 import Section from '@/components/section'
+import he from 'he'
 
 // mantine imports
 import {
@@ -56,7 +57,7 @@ function Inbox({ emails }: HomeProps) {
 				<Accordion chevronPosition='left' sx={{ maxWidth: 'auto' }} mx='auto'>
 					{emails.map((email) => (
 						<Accordion.Item value={email.id}>
-							<AccordionControl>{email.snippet}</AccordionControl>
+							<AccordionControl>{he.decode(email.snippet)}</AccordionControl>
 							<Accordion.Panel>
 								{
 									<div
