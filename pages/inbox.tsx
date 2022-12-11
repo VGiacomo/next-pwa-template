@@ -5,6 +5,24 @@ import { Buffer } from 'buffer'
 import Page from '@/components/page'
 import Section from '@/components/section'
 
+// mantine imports
+import {
+	Accordion,
+	ActionIcon,
+	AccordionControlProps,
+	Box,
+} from '@mantine/core'
+// import { IconDots } from '@tabler/icons';
+
+function AccordionControl(props: AccordionControlProps) {
+	return (
+		<Box sx={{ display: 'flex', alignItems: 'center' }}>
+			<Accordion.Control {...props} />
+			<ActionIcon size='lg'>{/* <IconDots size={16} /> */}</ActionIcon>
+		</Box>
+	)
+}
+
 export async function getServerSideProps() {
 	let messages: Message[] = []
 	try {
@@ -23,72 +41,36 @@ export async function getServerSideProps() {
 }
 
 function base64DecodeUnicode(str: any) {
-	// Convert Base64 encoded bytes to percent-encoding, and then get the original string.
 	// Decode the base64-encoded string
 	const decodedString = Buffer.from(str, 'base64').toString('utf8')
 	return decodedString
 }
 
 function Inbox({ emails }: HomeProps) {
-	const [emailDataToShow, setEmailDataToShow] = useState({
-		id: '',
-		content: '',
-	})
 	console.log(emails)
-
-	function onClickedTitle(emailId: string, emailContent: string) {
-		emailDataToShow.id !== emailId
-			? setEmailDataToShow({
-					id: emailId,
-					content: emailContent,
-			  })
-			: setEmailDataToShow({ id: '', content: '' })
-	}
 
 	return (
 		<Page>
 			<Section>
-				<div>
-					List of emails :
-					<ul>
-						{emails.map((email) => (
-							<li key={email.id}>
-								<div
-									onClick={() =>
-										onClickedTitle(
-											email.id,
-											base64DecodeUnicode(email.payload.parts[1].body.data)
-										)
-									}
-								>
-									{email.snippet}
-								</div>
-								{emailDataToShow?.id === email.id && (
+				List of emails :
+				<Accordion chevronPosition='left' sx={{ maxWidth: 'auto' }} mx='auto'>
+					{emails.map((email) => (
+						<Accordion.Item value={email.id}>
+							<AccordionControl>{email.snippet}</AccordionControl>
+							<Accordion.Panel>
+								{
 									<div
 										dangerouslySetInnerHTML={{
-											__html: emailDataToShow.content,
+											__html: base64DecodeUnicode(
+												email.payload.parts[1].body.data
+											),
 										}}
 									></div>
-								)}
-							</li>
-						))}
-					</ul>
-					{
-						// display the content of each email as html content
-						/* <ul>
-				{emails.map((email) => (
-					<li key={email.id} style={{backgroundColor: 'white', width: 'auto'}}>
-						<div dangerouslySetInnerHTML={{ __html: base64DecodeUnicode(email.payload.parts[1].body.data) }}></div>
-						
-						{' '}
-						---------
-						-----------
-						{' '}
-					</li>
-				))}
-			</ul> */
-					}
-				</div>
+								}
+							</Accordion.Panel>
+						</Accordion.Item>
+					))}
+				</Accordion>
 			</Section>
 		</Page>
 	)
