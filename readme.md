@@ -52,3 +52,8 @@ Fluffless doesn't mean "start with nothing". The goal of this template is to be 
 ### Mobile
 
 <img alt="" src="public/images/ios.png" width="500" />
+
+
+## Things to look after
+
+- ✨ replace dangerouslySetInnerHTML tags with some external library like html-to-React

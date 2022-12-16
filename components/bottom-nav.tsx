@@ -35,8 +35,8 @@ export default BottomNav
 
 const links = [
 	{
-		label: 'Search',
-		href: '/',
+		label: 'Discover',
+		href: '/discover',
 		icon: (
 			<SearchIcon width={18} height={18}></SearchIcon>
 		),

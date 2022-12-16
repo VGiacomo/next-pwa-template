@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 const links = [
-	{ label: 'Search', href: '/search' },
-	{ label: 'Login', href: '/login' },
+	{ label: 'Discover', href: '/discover' },
+	// { label: 'Login', href: '/login' },
 	{ label: 'Inbox', href: '/inbox' },
 	{ label: 'Settings', href: '/settings' },
 ]
@@ -45,25 +45,13 @@ const Appbar = () => {
 									title='Account'
 									className={`h-10 w-10 rounded-full bg-zinc-200 bg-cover bg-center shadow-inner dark:bg-zinc-800 ${
 										router.pathname === '/account'
-											? 'hover:border-blue-900 hover:border-solid '
+											? 'hover:border-solid hover:border-blue-900 '
 											: 'hover:border-black-900 hover:border-solid '
 									}`}
 									style={{
 										backgroundImage:
 											'url(https://images.unsplash.com/photo-1612480797665-c96d261eae09?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80)',
 									}}
-								></div>
-							</Link>
-						</div>
-						<div>
-							<Link href='/discover'>
-								<div
-									title='Discover'
-									className={`h-10 w-10 rounded-full bg-zinc-200 bg-cover bg-center shadow-inner dark:bg-zinc-800 ${
-										router.pathname === '/account'
-											? 'hover:border-blue-900 hover:border-solid '
-											: 'hover:border-black-900 hover:border-solid '
-									}`}
 								></div>
 							</Link>
 						</div>
