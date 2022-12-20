@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 const links = [
 	{ label: 'Discover', href: '/discover' },
-	// { label: 'Login', href: '/login' },
+	{ label: 'MongoDB', href: '/connectionToMongoDB' },
 	{ label: 'Inbox', href: '/inbox' },
 	{ label: 'Settings', href: '/settings' },
 ]
