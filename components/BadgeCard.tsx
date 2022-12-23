@@ -1,4 +1,4 @@
-import { IconHeart } from '@tabler/icons'
+import { IconHeart, IconRss } from '@tabler/icons'
 import {
 	Card,
 	Image,
@@ -9,7 +9,10 @@ import {
 	ActionIcon,
 	createStyles,
 } from '@mantine/core'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { connectToDatabase } from '@/lib/mongodb'
+import { ObjectId, UUID } from 'bson'
+import { Subscription } from '@/pages/types'
 
 const useStyles = createStyles((theme) => ({
 	card: {
@@ -26,8 +29,11 @@ const useStyles = createStyles((theme) => ({
 		paddingBottom: theme.spacing.md,
 	},
 
-	like: {
+	subscribed: {
 		color: theme.colors.red[6],
+	},
+	unSubscribed: {
+		color: theme.colors.white,
 	},
 
 	label: {
@@ -42,7 +48,8 @@ interface BadgeCardProps {
 	title: string
 	country: string
 	description: string
-	listId: string
+	onClick: () => {}
+  active: boolean
 	badges: {
 		emoji: string
 		label: string
@@ -53,12 +60,12 @@ export function BadgeCard({
 	image,
 	title,
 	description,
+  active,
 	country,
 	badges,
-	listId,
+	onClick,
 }: BadgeCardProps) {
 	const { classes, theme } = useStyles()
-	const [favourites, setFavourites] = useState<string[]>([])
 
 	const features = badges.map((badge) => (
 		<Badge
@@ -69,12 +76,7 @@ export function BadgeCard({
 			{badge.label}
 		</Badge>
 	))
-	function updateFavourites(listId: string) {
-    //TODO check if already a favourite and remove it from the list 
-		const newFavourites = [...favourites, listId]
-		console.log({ newFavourites })
-		setFavourites(newFavourites)
-	}
+
 	return (
 		<Card withBorder radius='md' p='md' className={classes.card}>
 			<Card.Section>
@@ -107,12 +109,12 @@ export function BadgeCard({
 					Show details
 				</Button>
 				<ActionIcon variant='default' radius='md' size={36}>
-					<IconHeart
+					<IconRss
 						size={18}
-						onClick={() => updateFavourites(listId)}
-						className={classes.like}
-						stroke={1.5}
-					/>
+						onClick={onClick}
+						className={active ? classes.subscribed : classes.unSubscribed}
+						stroke={3}
+					></IconRss>
 				</ActionIcon>
 			</Group>
 		</Card>

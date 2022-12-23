@@ -54,6 +54,7 @@ function Inbox({ emails }: HomeProps) {
 		<Page>
 			<Section>
 				List of emails :
+				<div></div>
 				<Accordion chevronPosition='left' sx={{ maxWidth: 'auto' }} mx='auto'>
 					{emails.map((email) => (
 						<Accordion.Item value={email.id}>

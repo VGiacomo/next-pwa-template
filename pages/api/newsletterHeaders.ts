@@ -1,6 +1,7 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import {connectToDatabase} from '../../lib/mongodb';
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const {db} = await connectToDatabase();
     const data = await db.collection("NewsletterHeaders").find({}).limit(20).toArray();
 
