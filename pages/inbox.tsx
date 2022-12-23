@@ -55,31 +55,19 @@ function Inbox({ emails }: HomeProps) {
 			<Section>
 				List of emails :
 				<Accordion chevronPosition='left' sx={{ maxWidth: 'auto' }} mx='auto'>
-					{emails.map((email: any) => (
+					{emails.map((email) => (
 						<Accordion.Item value={email.id}>
 							<AccordionControl>{he.decode(email.snippet)}</AccordionControl>
-							<Accordion.Panel>								
-								{/* if(email.id === "1851ffe57208ddf9") */}
+							<Accordion.Panel>
 								{
 									<div
 										dangerouslySetInnerHTML={{
 											__html: base64DecodeUnicode(
-												// email.payload.parts[1].body.data         some emails dont contain a payload.parts property
-												email.snippet
+												email.payload.parts[1].body.data
 											),
 										}}
 									></div>
 								}
-								{/* else
-								{
-									<div
-										dangerouslySetInnerHTML={{
-											__html: base64DecodeUnicode(
-												email.payload?.parts[1]?.body.data
-											),
-										}}
-									></div>
-								} */}
 							</Accordion.Panel>
 						</Accordion.Item>
 					))}
