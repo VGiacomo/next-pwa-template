@@ -50,11 +50,20 @@ function base64DecodeUnicode(str: any) {
 function Inbox({ emails }: HomeProps) {
 	console.log(emails)
 
+	// TODO get the headers common to each newsletter
+	// 	function getHeaders() {
+	// 		for (const header of emails.payload.headers) {
+	// 			if (header.name.toLowerCase() === 'list-unsubscribe' || header.name.toLowerCase() === 'precedence' || header.name.toLowerCase().startsWith('x-')) {
+	// 			  console.log(`Found header: ${header.name} = ${header.value}`);
+	// 			}
+	// 		  }
+
+	// }
+
 	return (
 		<Page>
 			<Section>
-				List of emails :
-				<div></div>
+				List of emails :<div></div>
 				<Accordion chevronPosition='left' sx={{ maxWidth: 'auto' }} mx='auto'>
 					{emails.map((email) => (
 						<Accordion.Item value={email.id}>

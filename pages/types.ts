@@ -48,5 +48,5 @@ export interface NewsletterHeader {
 	description: string
 	title: string
 	cover: string
-	'list-id': string
+	from: string
 }

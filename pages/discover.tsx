@@ -41,30 +41,40 @@ export default function Discover({
 	subscriptions,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
 	const router = useRouter()
-	async function updateFavourites(listId: string) {
+
+	async function updateFavourites(nlHeaderFrom: string) {
 		//TODO check if already a favourite and remove it from the list
-		// let newFavourites: Subscription[] = []
-		// let faveSelected: Subscription = {
-		// 	_id: ObjectId,
-		// 	userId: '',
-		// 	newsLetterHeaderId: listId,
-		// 	subscriptionDate: Date,
-		// }
-		console.log('****************', subscriptions, listId)
+
+		console.log('****************', subscriptions, nlHeaderFrom)
 
 		const subscriptionFound = subscriptions.find(
-			(sub) => sub.newsLetterHeaderId === listId
+			(sub) => sub.newsLetterHeaderId === nlHeaderFrom
 		)
+		
 		if (subscriptionFound) {
+			console.log({subscriptionFound});
 			const response = await fetch(
 				`/api/subscriptions/${subscriptionFound._id}`,
-				{ method: 'delete' }
+				{ method: 'DELETE' }
 			)
-			router.replace(router.asPath)
 		} else {
-			console.log('not found!!!')
+			let nlHeaderToAdd = newsletterHeaders.find(
+				(nlH) => nlH.from === nlHeaderFrom
+			)
+			let faveSelected: Subscription = {
+				_id: nlHeaderToAdd!._id,
+				userId: '',
+				newsLetterHeaderId: nlHeaderFrom,
+				subscriptionDate: new Date((new Date()).getTime() + 24*60*60*1000),
+			}
+
+			const response = await fetch(`/api/subscriptions/${faveSelected._id}`, {
+				method: 'POST',
+				body: JSON.stringify(faveSelected),
+				headers: {'Content-Type': 'application/json'}
+			})
 		}
-		
+		router.replace(router.asPath)
 	}
 
 	return (
@@ -74,7 +84,7 @@ export default function Discover({
 					const subscriptionFound = subscriptions.find(
 						(sub) =>
 							sub.newsLetterHeaderId !== '' &&
-							sub.newsLetterHeaderId === nlHeader['list-id']
+							sub.newsLetterHeaderId === nlHeader.from
 					)
 
 					return (
@@ -94,70 +104,10 @@ export default function Discover({
 								},
 							]}
 							active={!!subscriptionFound}
-							onClick={() => updateFavourites(nlHeader['list-id'])}
+							onClick={() => updateFavourites(nlHeader.from)}
 						></BadgeCard>
 					)
 				})}
-				{/* <BadgeCard
-					image='https://images.unsplash.com/photo-1437719417032-8595fd9e9dc6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80'
-					title='Verudela Beach'
-					country='Croatia'
-					description='A newsletter for the globetrotters out there '
-					badges={[
-						{
-							emoji: '☀️',
-							label: 'Sunny weather',
-						},
-						{
-							emoji: '🦓',
-							label: 'Onsite zoo',
-						},
-						{
-							emoji: '🌊',
-							label: 'Sea',
-						},
-						{
-							emoji: '🌲',
-							label: 'Nature',
-						},
-						{
-							emoji: '🤽',
-							label: 'Water sports',
-						},
-					]}
-				></BadgeCard>
-				<BadgeCard
-					image='/images/Screenshot-photography.png'
-					title='Photography news'
-					country='Belgium'
-					description='A newsletter for the photography lovers '
-					badges={[
-						{
-							emoji: '🌆',
-							label: 'Street',
-						},
-						{
-							emoji: '🏞️',
-							label: 'Landscape',
-						},
-					]}
-				></BadgeCard>
-				<BadgeCard
-					image='/images/Screenshot-Cuisine.jpg'
-					title='The cook book'
-					country='Italy'
-					description='A new recepe once a week '
-					badges={[
-						{
-							emoji: '🍅🥕🫑',
-							label: 'Veggies',
-						},
-						{
-							emoji: '🎉🎊',
-							label: 'Special occasion',
-						},
-					]}
-				></BadgeCard> */}
 			</Section>
 		</Page>
 	)
